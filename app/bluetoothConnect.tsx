@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import useBLE from './useBLE';
+import useBLE from '../useBLE';
 import { useState } from 'react';
-import DeviceModal from './components/DeviceConnectionModal';
+import DeviceModal from '../components/DeviceConnectionModal';
 
-const App = () => {
+const bluetoothConnect = () => {
   const {
     requestPermissions,
     scanForPeripherals,
@@ -47,10 +47,7 @@ const App = () => {
     setIsWifiPopUpOn(false);
   }
 
-  const readd = async () => {
-    readText().then((returnText) => {setText(returnText)});
-    
-  }
+
 
 
   const logIntoWifi = () => {
@@ -206,4 +203,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;
+export default bluetoothConnect;
