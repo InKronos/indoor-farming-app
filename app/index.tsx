@@ -1,6 +1,7 @@
-import { Link } from "expo-router";
-import { SafeAreaView, StyleSheet, View } from "react-native";
-import { FAB } from "react-native-paper";
+import { Link, router } from "expo-router";
+import { Pressable, SafeAreaView, StyleSheet, View } from "react-native";
+import { FAB, List } from "react-native-paper";
+import HeaderComponent from "../components/header";
 
 interface homeScreenProps {
     
@@ -11,7 +12,43 @@ const home = (props: homeScreenProps) => {
 
     return(
         <SafeAreaView style={{flex: 1}}>
-            <View></View>
+            <View>
+                
+                    <List.Item
+                    
+                     key="1"
+                     title="Raspberry PI1"
+                     onPress={() => {}}
+                     description="Connected"
+                     left={props => <List.Icon 
+                        {...props} 
+                        icon="raspberry-pi" 
+                    />}
+                     right={props => 
+                        <Pressable
+                        onPress={() =>
+                          router.push({
+                            pathname: "/devices/[id]",
+                            params: { id: 1, nameTitle: "Raspberry PI1" },
+                          })
+                        }
+                      >
+                            <List.Icon {...props} icon="eye" />
+                        </Pressable>}
+                />
+                
+                <List.Item
+                     key="2"
+                     title="LattePanda PI1"
+                     onPress={() => {}}
+                     description="Connected"
+                     left={props => <List.Icon 
+                        {...props} 
+                        icon="panda" 
+                    />}
+                     right={props => <List.Icon {...props} icon="eye" />}
+                />
+            </View>
             <Link href="/bluetoothConnect" style={{position: "absolute", bottom: 0, right: 0, margin: 5}}>
                 <FAB
                     icon="bluetooth"
@@ -26,7 +63,7 @@ const home = (props: homeScreenProps) => {
 const styles = StyleSheet.create({
     fab: {       
         borderRadius: 100,
-        backgroundColor: "#b3e5fc",
+        backgroundColor: "#0082fc",
         color: "white"
     }
   });
