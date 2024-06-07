@@ -17,7 +17,7 @@ interface BluetoothLowEnergyApi {
   requestPermissions(): Promise<boolean>;
   scanForPeripherals(): void;
   allDevices: Device[];
-  connectToDevice: (deviceId: Device) => Promise<void>;
+  connectToDevice: (deviceId: string) => Promise<void>;
   disconnectFromDevice: () => void;
   connectedDevice: Device | null;
   infoFromDevice: string;
@@ -105,9 +105,9 @@ function useBLE(): BluetoothLowEnergyApi {
       }
     });
 
-  const connectToDevice = async (device: Device) => {
+  const connectToDevice = async (deviceId: string) => {
     try {
-      const deviceConnection = await bleManager.connectToDevice(device.id);
+      const deviceConnection = await bleManager.connectToDevice(deviceId);
       
       const deviceAndCharacteristics = await deviceConnection.discoverAllServicesAndCharacteristics();
       setConnectedDevice(deviceAndCharacteristics);
@@ -157,19 +157,10 @@ function useBLE(): BluetoothLowEnergyApi {
 
   const readText = async () => {
     try {
-      if(connectedDevice){
-        console.log(connectedDevice.name);
-        console.log(connectedDevice.id);
-
-        const services =  await connectedDevice.services()
-        console.log(services);
-        const charet = await connectedDevice.characteristicsForService("a07498ca-ad5b-474e-940d-16f1fbe7e8cd");
-        console.log(charet);
-      }
       const text = await bleManager.readCharacteristicForDevice(
         connectedDevice?.id ?? "",
-        '0000180a-0000-1000-8000-00805f9b34fb',
-        '00002b2a-0000-1000-8000-00805f9b34fb'
+        'a07498ca-ad5b-474e-940d-16f1fbe7e8cd',
+        '51ff12bb-3ed8-46e5-b4f9-d64e2fec021b'
       );
       return base64.decode(text.value!);
     } catch (e) {

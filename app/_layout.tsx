@@ -20,7 +20,7 @@ const RootLayout = () => {
           },
         headerTintColor: '#fff',
       }}/>
-      <Stack.Screen name="devices/[id]"
+      <Stack.Screen name="devicesWiFi/[id]"
       options={{
         headerStyle: {
             backgroundColor: '#0082fc',
@@ -28,7 +28,25 @@ const RootLayout = () => {
         headerTintColor: '#fff',
       }}
         />
+      <Stack.Screen name="devicesBluetooth/[id]"
+      options={{
+        headerStyle: {
+            backgroundColor: '#0082fc',
+          },
+        headerTintColor: '#fff',
+      }}
+        />
+      <Stack.Screen name="bluetoothConnect"
+      options={{
+        headerTitle: "Connect to bluetooth device",
+        headerStyle: {
+            backgroundColor: '#0082fc',
+          },
+        headerTintColor: '#fff',
+      }}
+        />
     </Stack>
+    
   );
 };
 

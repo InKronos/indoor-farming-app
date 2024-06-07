@@ -1,26 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
-import { Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ListRenderItemInfo, Modal, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import useBLE from '../useBLE';
-import { useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import DeviceModal from '../components/DeviceConnectionModal';
+import { Device } from 'react-native-ble-plx';
+import { List } from 'react-native-paper';
+import { router } from 'expo-router';
+
+
 
 const bluetoothConnect = () => {
-  const {
-    requestPermissions,
-    scanForPeripherals,
-    allDevices,
-    connectToDevice,
-    connectedDevice,
-    disconnectFromDevice,
-    readText,
-    LogIntroWiFi
-  } = useBLE();
+    const {
+      requestPermissions,
+      scanForPeripherals,
+      allDevices,
+    } = useBLE();
 
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [text, setText] = useState<string | undefined>("");
-  const [isWifiPopUpOn, setIsWifiPopUpOn] = useState<boolean>(false);
-  const [wifiName, setWifiName] = useState('');
-  const [wifiPassword, setWifiPassword] = useState('');
+
+  useEffect(() => {
+    scanForDevices();
+  },[])
 
   const scanForDevices = async () => {
     const isPermissionsEnabled = await requestPermissions();
@@ -29,105 +28,43 @@ const bluetoothConnect = () => {
     }
   };
 
+  const [refreshing, setRefreshing] = useState(false);
 
-  const hideModal = () => {
-    setIsModalVisible(false);
-  };
+  const onRefresh = useCallback(() => {
+      setRefreshing(true);
+      scanForDevices();
+      setTimeout(() => {
+      setRefreshing(false);
+      }, 2000);
+  }, []);
 
-  const openModal = async () => {
-    scanForDevices();
-    setIsModalVisible(true);
-  };
-
-  const openPopUp = () => {
-    setIsWifiPopUpOn(true);
-  }
-
-  const hidePopUp = () => {
-    setIsWifiPopUpOn(false);
-  }
-
-
-
-
-  const logIntoWifi = () => {
-    // Handle the logic for logging into Wi-Fi here
-    // For example, sending the Wi-Fi credentials to the Raspberry Pi via Bluetooth
-    console.log(`WiFi Name: ${wifiName}, WiFi Password: ${wifiPassword}`);
-    // Implement the logic to send these credentials via Bluetooth
-    LogIntroWiFi(wifiName, wifiPassword);
-    hidePopUp();
-  };
+  
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.heartRateTitleWrapper}>
-        {connectedDevice ? (
-          <>
-            
-            <Text style={styles.heartRateTitleText}>Your Heart Rate Is:</Text>
-            <Text style={styles.heartRateText}>1 bpm</Text>
-            <Text style={styles.heartRateText}>{text}</Text>
-            <TouchableOpacity
-              onPress={openPopUp}
-              style={styles.ctaButton}
-            >
-              <Text style={styles.ctaButtonText}>
-                Log Intro Wifi
-              </Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <Text style={styles.heartRateTitleText}>
-            Please Connect to a Raspberry Pi
-          </Text>
-        )}
-      </View>
-      <TouchableOpacity
-        onPress={connectedDevice ? disconnectFromDevice : openModal}
-        style={styles.ctaButton}
-      >
-        <Text style={styles.ctaButtonText}>
-          {connectedDevice ? "Disconnect" : "Connect"}
-        </Text>
-      </TouchableOpacity>
-      <DeviceModal
-        closeModal={hideModal}
-        visible={isModalVisible}
-        connectToPeripheral={connectToDevice}
-        devices={allDevices}
-      />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isWifiPopUpOn}
-        onRequestClose={hidePopUp}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Enter Wi-Fi Credentials</Text>
-            <TextInput
-              placeholder="WiFi Name"
-              value={wifiName}
-              onChangeText={setWifiName}
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="WiFi Password"
-              value={wifiPassword}
-              onChangeText={setWifiPassword}
-              secureTextEntry
-              style={styles.input}
-            />
-            <TouchableOpacity onPress={logIntoWifi} style={styles.ctaButton}>
-              <Text style={styles.ctaButtonText}>Submit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={hidePopUp} style={styles.ctaButton}>
-              <Text style={styles.ctaButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        {allDevices && allDevices.map((device) => <>
+          <List.Item
+                     key={device.id}
+                     title={device.name}
+                     onPress={() => router.push({
+                        pathname: "/devicesBluetooth/[id]",
+                        params: { id: device.id, nameTitle: device.name },
+                      })}
+                     description="bluetooth on"
+                     left={props => <List.Icon 
+                        {...props} 
+                        icon="devices"
+                    />}
+                     right={props => <List.Icon {...props} icon="bluetooth" />}
+                />
+        </>)}
+      </ScrollView>
+      
+      
     </SafeAreaView>
   );
 }

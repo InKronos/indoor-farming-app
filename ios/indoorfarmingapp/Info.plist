@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>indoor-farming-app</string>
           <string>com.inkronos.indoorfarmingapp</string>
         </array>
       </dict>
@@ -50,6 +51,10 @@
     </dict>
     <key>NSBluetoothAlwaysUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to connect to bluetooth devices</string>
+    <key>NSUserActivityTypes</key>
+    <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+    </array>
     <key>UIBackgroundModes</key>
     <array>
       <string>bluetooth-central</string>
